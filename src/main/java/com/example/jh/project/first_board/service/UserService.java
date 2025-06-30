@@ -24,7 +24,7 @@ public class UserService {
         UserEntity user = UserDTO.toEntity(userDTO);
         userRepository.save(user);
     }
-
+// 가입이 된건지 확인 하기 위한 유저 찾기
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(UserDTO::new)

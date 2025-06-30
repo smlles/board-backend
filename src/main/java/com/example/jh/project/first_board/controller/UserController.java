@@ -21,18 +21,21 @@ public class UserController {
 
     private final UserService userService;
 
+    
+//  회원가입
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
         userService.saveUser(userDTO);
-        return ResponseEntity.ok("회원가입 완료!");
+        return ResponseEntity.ok().body("회원가입 성공");
     }
-
+// 회원가입 확인용 GET
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
+//    로그인 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO loginDTO) {
         UserDTO user = userService.loginUser(loginDTO);
@@ -44,6 +47,7 @@ public class UserController {
         }
     }
 
+//    회원 정보 수정
     @PutMapping("/me")
     public ResponseEntity<?> updateUser(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -57,8 +61,9 @@ public class UserController {
         }
     }
 
+//    회원 탈퇴
     @DeleteMapping("/me")
-    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
         boolean deleted = userService.deleteUser(userDetails.getUsername());
         if (deleted) {
             return ResponseEntity.ok("회원 탈퇴 완료");
