@@ -9,9 +9,9 @@ import com.example.jh.project.first_board.entity.UserEntity;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findById(String id);        
+         
     Optional<UserEntity> findByEmail(String email);
 
-    boolean existsById(String id);
+    
     boolean existsByEmail(String email);
 }

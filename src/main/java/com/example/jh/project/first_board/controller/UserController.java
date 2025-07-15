@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.jh.project.first_board.DTO.UserDTO;
+import com.example.jh.project.first_board.entity.UserEntity;
+import com.example.jh.project.first_board.security.CustomUserDetails;
 import com.example.jh.project.first_board.service.UserService;
 import com.example.jh.project.first_board.util.JwtUtil;
 
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;  // 주입
 
     
 //  회원가입
@@ -34,30 +37,35 @@ public class UserController {
         List<UserDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
-
-//    로그인 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO loginDTO) {
-        UserDTO user = userService.loginUser(loginDTO);
+        UserEntity user = userService.loginUser(loginDTO);
         if (user != null) {
-            String token = JwtUtil.generateToken(user.getId());
+            String token = jwtUtil.generateToken(user);
             return ResponseEntity.ok(token);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
     }
-
+//    수정할 때 얻을 개인 데이터
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        System.out.println("▶ 사용자 인증 객체: " + userDetails);
+        // 아래 코드 중 NPE나 Casting 에러 발생 가능성
+        String email = userDetails.getUsername(); // 또는 getEmail()
+        UserDTO userDto = userService.getUserByEmail(email);
+        return ResponseEntity.ok(userDto);
+    }
 //    회원 정보 수정
     @PutMapping("/me")
-    public ResponseEntity<?> updateUser(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody UserDTO updatedUser) {
-
-        UserDTO updated = userService.updateUser(userDetails.getUsername(), updatedUser);
-        if (updated != null) {
+    public ResponseEntity<?> updateUser(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                        @RequestBody UserDTO dto) {
+        try {
+            Long userId = userDetails.getUser().getUuid(); // ✅ 이미 Long임
+            UserDTO updated = userService.updateUser(userId, dto); // 메서드도 Long 타입
             return ResponseEntity.ok(updated);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 없음");
+        } catch (Exception e) {
+        	return null;
         }
     }
 

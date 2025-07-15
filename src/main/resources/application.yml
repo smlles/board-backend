@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/board_db?useSSL=false&serverTimezone=Asia/Seoul
-    username: root
-    password: 1111
+    url: jdbc:mysql://board-db-new.c3me2e6s4zzs.ap-northeast-2.rds.amazonaws.com:3306/board_db?useSSL=false&serverTimezone=Asia/Seoul
+    username: admin
+    password: 12345678
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -23,10 +23,18 @@ spring:
       max-request-size: 10MB
 
 jwt:
-  secret: local_jwt_secret_key
+  secret: ${JWT_SECRET:default_jwt_secret}
   expiration: 3600000  # 1 hour
 
 # Swagger UI 기본 경로
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+cors:
+  allowed-origins:
+    - https://your-frontend-domain.com
