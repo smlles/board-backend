@@ -2,6 +2,7 @@ package com.example.jh.project.first_board.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,23 @@ public class UserService {
         }
         return null;
     }
+//    비밀번호 재설정 
+    public String resetPassword(String email) {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
+
+        // 임시 비밀번호 생성
+        String tempPassword = UUID.randomUUID().toString().substring(0, 10);
+        //암호화
+        String encryptedPassword = passwordEncoder.encode(tempPassword);
+        //재설정
+        user.setPassword(encryptedPassword);
+        //저장
+        userRepository.save(user);
+
+        return tempPassword;
+    }
+    
 
     // 회원 탈퇴 - 성공 시 true 반환, 실패 시 false 반환
     public boolean deleteUser(String id) {

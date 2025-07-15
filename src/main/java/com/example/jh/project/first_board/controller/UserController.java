@@ -1,6 +1,7 @@
 package com.example.jh.project.first_board.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +69,20 @@ public class UserController {
         	return null;
         }
     }
+//    비밀번호 잊어버렸을 때, 강제 재설정 
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
 
+        try {
+        	  String tempPassword = userService.resetPassword(email);
+              return ResponseEntity.ok(Map.of("tempPassword", tempPassword));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("비밀번호 초기화 실패: " + e.getMessage());
+        }
+    }
 //    회원 탈퇴
     @DeleteMapping("/me")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
