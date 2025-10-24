@@ -1,5 +1,6 @@
 package com.example.jh.project.first_board.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,6 +25,7 @@ public class BoardEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	private String title;
+	@Column(columnDefinition = "TEXT")
 	private String description;
 	private String author;
 	

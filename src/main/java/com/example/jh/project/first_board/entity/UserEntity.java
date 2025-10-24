@@ -33,6 +33,7 @@ public class UserEntity {
 	
 	private String password;
 	@NotBlank
+	@Column(unique = true )
 	private String username;
 	
 	

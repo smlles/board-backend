@@ -12,8 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.jh.project.first_board.DTO.BoardDTO;
+import com.example.jh.project.first_board.DTO.BoardResponseDTO;
 import com.example.jh.project.first_board.DTO.ResponseDTO;
 import com.example.jh.project.first_board.entity.BoardEntity;
+import com.example.jh.project.first_board.repository.BoardRepository;
 import com.example.jh.project.first_board.security.CustomUserDetails;
 import com.example.jh.project.first_board.service.BoardService;
 
@@ -27,15 +29,16 @@ public class BoardController {
 //	LocalDateTime now = LocalDateTime.now();
 //	String formatted = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     private final BoardService service;
+    private final BoardRepository boardRepository;
 
 //    작성 
     @PostMapping
-    public ResponseEntity<?> createBoard(@AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<?> createBoard(@AuthenticationPrincipal CustomUserDetails userDetails,
                                          @RequestBody BoardDTO dto) {
     	System.out.println("userdetail : "+ userDetails);
         String userId = "테스트 계정";
         if (userDetails != null) {
-            userId = userDetails.getUsername();  // 왜 못얻지 
+            userId = userDetails.getUser().getUsername();  // 왜 못얻지 
         }
         System.out.println("작성자 userId: " + userId);
         BoardEntity entity = BoardDTO.toEntity(dto);
@@ -52,6 +55,19 @@ public class BoardController {
                                                     .data(result)
                                                     .build();
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/boards")
+    public ResponseDTO<BoardResponseDTO> getBoards() {
+        List<BoardEntity> boards = boardRepository.findAll();
+        List<BoardResponseDTO> boardDtos = boards.stream()
+                .map(BoardResponseDTO::new)
+                .toList();
+        
+        return ResponseDTO.<BoardResponseDTO>builder()
+                .error(null)
+                .data(boardDtos)
+                .build();
     }
 
     /* --------------------- 글 목록 조회 --------------------- */
@@ -115,12 +131,12 @@ public class BoardController {
     public ResponseEntity<?> deleteBoard(@PathVariable("id") Long id,
                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
-        	String currentUserEmail = userDetails.getUser().getEmail();
+        	String currentUsername = userDetails.getUser().getUsername();
         	
             // 게시글 조회
             BoardEntity post = service.findPostById(id);
 
-            if (!post.getAuthor().equals(currentUserEmail)) {
+            if (!post.getAuthor().equals(currentUsername)) {
             	return ResponseEntity.status(HttpStatus.FORBIDDEN)
 	           .body("삭제 권한이 없습니다.");
 	}
