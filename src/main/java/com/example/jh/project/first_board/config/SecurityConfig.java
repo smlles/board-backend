@@ -49,8 +49,9 @@ public class SecurityConfig {
                     "/board/*",
                     "/board/**",
                     "/error",
-                    "/favicon.ico"
-                    
+                    "/favicon.ico",
+                    "/api/comment/board/**",
+                    "/api/comment/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )

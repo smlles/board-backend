@@ -21,8 +21,8 @@ public class BoardService {
     /* CREATE ------------------------------------------------------------ */
     public List<BoardEntity> createPost(BoardEntity entity) {
         // 작성시간 ‧ 조회수 기본값 세팅
-        entity.setCreateDate(LocalDateTime.now()
-                             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        entity.setCreateDate(LocalDateTime.now());
+                             
         entity.setView(0L);
 
         repository.save(entity);
@@ -52,7 +52,7 @@ public class BoardService {
         // 필요한 필드만 수정
         target.setTitle(entity.getTitle());
         target.setDescription(entity.getDescription());
-        target.setComment(entity.getComment());
+        target.setComments(entity.getComments());
 
         repository.save(target);
         return repository.findAll();

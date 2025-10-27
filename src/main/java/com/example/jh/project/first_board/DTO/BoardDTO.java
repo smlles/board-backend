@@ -1,5 +1,7 @@
 package com.example.jh.project.first_board.DTO;
 
+import java.time.LocalDateTime;
+
 import com.example.jh.project.first_board.entity.BoardEntity;
 import com.example.jh.project.first_board.entity.UserEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,9 +21,9 @@ public class BoardDTO {
 	 
 	private String description;
 	private String author;
-	private String createDate;
+	private LocalDateTime createDate;
 	private Long view;
-	private String comment;
+	private int commentCount;
 	
 	
 	
@@ -33,7 +35,7 @@ public class BoardDTO {
 		this.author = boardEntity.getAuthor();
 		this.createDate = boardEntity.getCreateDate();
 		this.view = boardEntity.getView();
-		this.comment = boardEntity.getComment();
+		this.commentCount = boardEntity.getComments() != null ? boardEntity.getComments().size() : 0;
 	}
 	
 	
@@ -45,7 +47,6 @@ public class BoardDTO {
 	                .author(dto.getAuthor())
 	                .createDate(dto.getCreateDate())
 	                .view(dto.getView())
-	                .comment(dto.getComment())
 	                .build();
 	    }
 	

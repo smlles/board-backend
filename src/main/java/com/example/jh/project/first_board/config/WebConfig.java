@@ -18,7 +18,7 @@ public class WebConfig {
                     		"https://www.springbootjyh.shop",
                     		"http://board-back-end-env.eba-uh9hqpkz.ap-northeast-2.elasticbeanstalk.com",
                     		"https://board-back-end-env.eba-uh9hqpkz.ap-northeast-2.elasticbeanstalk.com")  // React 개발 서버
-                    .allowedMethods("*","GET","POST","PUT","DELETE","OPTIONS")
+                    .allowedMethods("*","GET","POST","PUT","DELETE","OPTIONS","*")
                     .allowedHeaders("*")
                     
                     .allowCredentials(true);
